@@ -1,0 +1,30 @@
+GET http://localhost:3001/employee/1
+###
+POST http://localhost:3001/employee/login
+Content-Type: application/json
+
+{
+        "email": "ezmail@ezmail.com",
+        "password": "ezpass"
+}
+
+###
+POST http://localhost:3001/employee/
+Content-Type: application/json
+
+{
+        "email": "ezmail2@ezmail.com",
+        "password": "ezpass2",
+        "first_name": "Eric2",
+        "last_name": "Turko2",
+        "role": "driver",
+        "phone_number": "011-010-0100"
+}
+
+###
+POST http://localhost:3001/employee/1
+Content-Type: application/json
+
+{
+    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQsImlhdCI6MTY3NjkzMzIzN30.b1CFFjF1AG9CDOTpAgp-0fTgiZ32Ve2rSx2bp539-9A" 
+}

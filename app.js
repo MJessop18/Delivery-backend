@@ -2,7 +2,9 @@ const express = require ('express');
 const app = express();
 const {NotFoundError} = require('./express-error');
 
-const userRoutes = require ('./routes/users');
+const employeeRoutes = require ('./src/routes/employee');
+const customerRoutes = require ('./src/routes/customer');
+const orderRoutes = require ('./src/routes/order');
 
 app.use(express.json());
 
@@ -10,7 +12,9 @@ app.get('/', (req,res) => {
     res.json({ hello : 'world'})
 });
 
-app.use ('/users', userRoutes);
+app.use('/employee', employeeRoutes)
+app.use('/customer', customerRoutes)
+app.use('/order', orderRoutes)
 
 //404 error handler 
 app.use(function(req,res, next){
@@ -18,14 +22,6 @@ app.use(function(req,res, next){
 });
 
 //general error handler
-app.use(function(err,req,res,next){
-    if (process.eventNames.NODE_EMV !== 'test') console.error(err.stack);
-    const status = err.status || 500;
-    const message = err.message;
-    
-    return res.status(status).json({
-        error: {message, status}
-    });
-});
+
 
 module.exports = app;

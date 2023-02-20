@@ -1,9 +1,18 @@
-const {Client} = require ('pg/lib');
-const {DB_URI} = require ('./config');
+const { Client } = require('pg');
+ 
+const client = new Client({
+  host: 'localhost',
+  port: 5432,
+  user: 'postgres',
+  password: 'admin',
+  database: 'deliverydb'
+})
 
-const client = new Client ({
-    connectionstring: DB_URI 
+
+client.connect((err) => {
+  if(err) {
+    console.error('connection error', err.stack)
+  }else{console.log('connected')
+}
 });
-
-client.connect();
 module.exports = client;

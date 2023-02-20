@@ -1,100 +1,114 @@
-DROP DATABASE IF EXISTS bedcorndb;
+DROP DATABASE IF EXISTS deliverydb;
 
-CREATE DATABASE bedcorndb;
+CREATE DATABASE deliverydb;
 
-\c bedcorndb;
+\c deliverydb;
 
-CREATE TABLE users(
+CREATE TYPE authRole AS ENUM ('driver', 'manager', 'inactive');
+
+CREATE TABLE employee(
     id SERIAL PRIMARY KEY,
     email TEXT NOT NULL,
     password TEXT NOT NULL,
     first_name VARCHAR(15),
     last_name VARCHAR(20),
-    role TEXT NOT NULL
+    role authRole NOT NULL,
+    phone_number TEXT NOT NULL,
+    employee_rating INTEGER
 );
 
-CREATE TABLE user_preferences(
+CREATE TABLE customer(
     id SERIAL PRIMARY KEY,
-    user_id INTEGER
-        REFERENCES users ON DELETE CASCADE,
-    favorite_artists TEXT,
-    dark_mode BOOLEAN
+    email TEXT NOT NULL,
+    password TEXT NOT NULL,
+    first_name VARCHAR(15),
+    last_name VARCHAR(20),
+    phone_number TEXT NOT NULL
 );
 
-CREATE TABLE albums(
+CREATE TABLE food_order(
     id SERIAL PRIMARY KEY,
-    artist_names TEXT,
-    album_title TEXT,
-    album_length INTEGER,
-    track_count INTEGER,
-    album_cover TEXT
-);
-
-CREATE TABLE tracks(
-    id SERIAL PRIMARY KEY,
-    album_id INTEGER
-        REFERENCES albums ON DELETE CASCADE,
-    track_name TEXT,
-    track_length INTEGER,
-    genre TEXT,
-    bpm INTEGER,
-    tags TEXT,
-    create_date INTEGER,
-    album_cover TEXT
+    employee_id INTEGER
+        REFERENCES employee ON DELETE CASCADE,
+    customer_id INTEGER
+        REFERENCES customer ON DELETE CASCADE,
+    food_items TEXT NOT NULL,
+    pickup_address TEXT NOT NULL,
+    delivery_address TEXT NOT NULL,
+    delivery_notes VARCHAR(250),
+    active_status BOOLEAN
 );
 
 CREATE TABLE order_history(
     id SERIAL PRIMARY KEY,
-    tracks_id INTEGER
-        REFERENCES tracks,
-    user_id INTEGER
-        REFERENCES users,
-    purchase_type TEXT,
-    cost INTEGER,
-    purchase_date INTEGER
+    customer_id INTEGER
+        REFERENCES customer ON DELETE CASCADE,
+    order_id INTEGER
+        REFERENCES food_order ON DELETE CASCADE,
+    food_items TEXT NOT NULL,
+    pickup_address TEXT NOT NULL,
+    delivery_address TEXT NOT NULL,
+    delivery_notes VARCHAR(250),
+    food_score INTEGER,
+    driver_score INTEGER
 );
 
-INSERT INTO users
-    (email, password, first_name, last_name, role)
+INSERT INTO employee
+    (email, password, first_name, last_name, role, phone_number, employee_rating)
 VALUES 
-    ('fake-email123@email.com', 'password', 'George', 'Smith', 'admin');
+    ('fake-email123@email.com', 'epic-password', 'George', 'Smith', 'driver', '000-000-0000', 6.2);
 
-INSERT INTO users
-    (email, password, first_name, last_name, role)
+INSERT INTO employee
+    (email, password, first_name, last_name, role, phone_number, employee_rating)
 VALUES 
-    ('coolemailname@email.com', 'password', 'John', 'Doe', 'client');
+    ('coolemailname@email.com', 'super-epic-password', 'John', 'Doe', 'manager', '123-456-7890', 10);
 
-INSERT INTO users
-    (email, password, first_name, last_name, role)
+INSERT INTO employee
+    (email, password, first_name, last_name, role, phone_number, employee_rating)
 VALUES 
-    ('realemailaddress@email.com', 'password', 'Mark', 'Zuckerberg', 'client');
+    ('realemailaddress@email.com', 'super-duper-epic-password', 'Mark', 'Zuckerberg', 'driver', '111-222-3333', 2.5);
 
-INSERT INTO user_preferences
-    (user_id, favorite_artists, dark_mode)
-VALUES 
-    (1, 'Playboi Carti, Comethazine, Trippieredd', True);
+INSERT INTO customer
+    (email, password, first_name, last_name, phone_number)
+VALUES
+    ('blahblahblah@blahmail.com', 'not-epic-password', 'Tommy', 'Hilfiger', '310-123-4567');
 
-INSERT INTO user_preferences
-    (user_id, favorite_artists, dark_mode)
-VALUES 
-    (2, 'Tears for Fears, Depeche Mode, David Hasselhoff', False);
+INSERT INTO customer
+    (email, password, first_name, last_name, phone_number)
+VALUES
+    ('superrealemail@definitelyreal.com', 'really-not-epic-password', 'Brent', 'Hogan', '800-800-8000');
 
-INSERT INTO user_preferences
-    (user_id, favorite_artists, dark_mode)
-VALUES 
-    (3, 'Eminem', True);
+    INSERT INTO customer
+    (email, password, first_name, last_name, phone_number)
+VALUES
+    ('ricksanchez@spaceman.com', 'extremely-not-epic-epic-password', 'Rick', 'Sanchez', '787-900-9000');
 
-INSERT INTO albums
-    (artist_names, album_title, album_length, track_count, album_cover)
+INSERT INTO food_order
+    (employee_id, customer_id, food_items, pickup_address, delivery_address, delivery_notes, active_status)
 VALUES 
-    ('Bedcorn', '$omeThroaway$', 28.15, 8, 'gettyimages.com');
+    (1, 1, 'Bean and cheese burrito, Chips & Salsa, medium Horchata', '123 Fake street, 90210, CA', '654 Real street, 90210, CA', 'leave at door', true);
 
-INSERT INTO albums
-    (artist_names, album_title, album_length, track_count, album_cover)
+INSERT INTO food_order
+    (employee_id, customer_id, food_items, pickup_address, delivery_address, delivery_notes, active_status)
 VALUES 
-    ('Bedcorn', 'Single', 3.01, 1, 'gettyimages.com');
+    (2, 2, 'Cheeseburger, french fries, small Sprite', '125 Fake street, 90266, CA', '658 Real street, 90266, CA', 'extra ranch', true);
 
-INSERT INTO albums
-    (artist_names, album_title, album_length, track_count, album_cover)
+INSERT INTO food_order
+    (employee_id, customer_id, food_items, pickup_address, delivery_address, delivery_notes, active_status)
 VALUES 
-    ('Bedcorn', 'FT', 12.03, 5, 'gettyimages.com');
+    (3, 3, 'large Coca-cola', '129 Fake street, 90250, CA', '650 Real street, 90250, CA', 'ring bell', true);
+
+INSERT INTO order_history
+    (customer_id, order_id, food_items, pickup_address, delivery_address, delivery_notes, food_score, driver_score)
+VALUES 
+    (1,1,'Bean and cheese burrito, Chips & Salsa, medium Horchata', '123 Fake street, 90210, CA', '654 Real street, 90210, CA', 'leave at door', 7,2.5);
+
+INSERT INTO order_history
+    (customer_id, order_id, food_items, pickup_address, delivery_address, delivery_notes, food_score, driver_score)
+VALUES 
+    (2,2, 'Cheeseburger, french fries, small Sprite', '125 Fake street, 90266, CA', '658 Real street, 90266, CA', 'extra ranch', 4.3,6);
+
+INSERT INTO order_history
+    (customer_id, order_id, food_items, pickup_address, delivery_address, delivery_notes, food_score, driver_score)
+VALUES 
+    (3,3, 'large Coca-cola', '129 Fake street, 90250, CA', '650 Real street, 90250, CA', 'ring bell', 10,10);

@@ -14,7 +14,7 @@ class NotFoundError extends ExpressError {
 }
 
 //401 unauthorized error
-class UnauthroizedError extends ExpressError {
+class UnauthorizedError extends ExpressError {
     constructor(message = 'unauthorized'){
         super(message,401);
     }
@@ -34,4 +34,4 @@ class ForbiddenError extends ExpressError {
     }
 }
 
-module.exports = {ExpressError, NotFoundError, UnauthroizedError, BadRequestError, ForbiddenError};
+module.exports = {ExpressError, NotFoundError, UnauthorizedError, BadRequestError, ForbiddenError};
