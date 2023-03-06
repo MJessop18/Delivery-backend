@@ -1,10 +1,11 @@
 const express = require ('express');
 const Customer = require ('../models/customer')
 const Router = require('express');
+const { ensureManager } = require('../../middleware/auth');
 
 const router = express.Router();
 
-router.get('/all', async function(req, res, next){
+router.get('/all', ensureManager, async function(req, res, next){
     
     try {
         const customer = await Customer.getAll();
@@ -14,7 +15,7 @@ router.get('/all', async function(req, res, next){
     }
 });
 
-router.get('/:customerId', async function (req, res, next){
+router.get('/:customerId', ensureManager, async function (req, res, next){
     try{
         const customer = await Customer.get(req.params.customerId);
         return res.json({customer});

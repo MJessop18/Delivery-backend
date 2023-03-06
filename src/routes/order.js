@@ -3,10 +3,11 @@ const Order = require ('../models/order')
 const Router = require('express');
 const {separateIntoArray} = require('../../middleware/edit');
 const {joinItems} = require('../../middleware/joinItems');
+const {ensureDriver, ensureManager} = require('../../middleware/auth');
 
 const router = express.Router();
 
-router.get('/all', async function(req, res, next){
+router.get('/all', ensureDriver, async function(req, res, next){
     
     try {
         const order = await Order.getAll();
@@ -16,7 +17,7 @@ router.get('/all', async function(req, res, next){
     }
 });
 
-router.get('/:orderId', async function(req, res, next){
+router.get('/:orderId', ensureDriver, async function(req, res, next){
     try{
         const order = await Order.get(req.params.orderId);
             return res.json({order})
@@ -34,7 +35,7 @@ router.post('/new', async function(req, res, next){
     }
 });
 
-router.delete('/:orderId', async function (req, res, next){
+router.delete('/:orderId', ensureManager, async function (req, res, next){
     try{
         await Order.remove(req.params.orderId);
         return res.json({deleted: req.params.orderId})
@@ -42,7 +43,7 @@ router.delete('/:orderId', async function (req, res, next){
         return next(err)
     }
 });
-router.get('/:orderId/editOrder', async function (req, res, next){
+router.get('/:orderId/editOrder', ensureManager, async function (req, res, next){
     try {
         const order = await Order.getItemizedOrder(req.params.orderId);
         const orderString = Object.values(order).toString();
@@ -63,7 +64,7 @@ router.patch("/:orderId/newItems", async function (req, res, next){
     }
 })
 
-router.post('/:orderId/completed', async function(req, res, next){
+router.post('/:orderId/completed', ensureDriver, async function(req, res, next){
     try{
         let order = await Order.archivedOrder(req.params.orderId, req.body)
         return res.json({order})

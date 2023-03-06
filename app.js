@@ -1,4 +1,5 @@
 const express = require ('express');
+const cors = require ('cors');
 const app = express();
 const {NotFoundError} = require('./express-error');
 
@@ -6,6 +7,7 @@ const employeeRoutes = require ('./src/routes/employee');
 const customerRoutes = require ('./src/routes/customer');
 const orderRoutes = require ('./src/routes/order');
 
+app.use(cors());
 app.use(express.json());
 
 app.get('/', (req,res) => {

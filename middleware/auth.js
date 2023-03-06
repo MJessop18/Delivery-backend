@@ -6,14 +6,13 @@ const Employee = require("../src/models/employee");
 
 async function getEmpForToken(req){
     const authHeader = req.body && req.body.Authorization;
-    console.log('2', authHeader)
     if(!authHeader){
         console.log('authHeader not supplied');
         return;
     }
     const token = authHeader.replace(/^[Bb]earer /, '').trim();
-    console.log('4', token)
-    const parsedToken = jwt.verify(authHeader, SECRET_KEY);
+    console.log('!!', SECRET_KEY, typeof SECRET_KEY)
+    const parsedToken = jwt.verify(token, SECRET_KEY.SECRET_KEY);
     if(
         typeof parsedToken !== 'object' || 
         parsedToken === null ||
@@ -34,7 +33,6 @@ async function getEmpForToken(req){
 
 async function ensureDriver(req,res,next){
     try{
-        console.log('3', req)
         const employee = await getEmpForToken(req);
         if(employee){
             const role = employee.role;
@@ -48,4 +46,34 @@ async function ensureDriver(req,res,next){
     }
 }
 
-module.exports = {ensureDriver};
+async function ensureManager(req, res, next){
+    try{
+        const employee = await getEmpForToken(req);
+        if(employee){
+            const role = employee.role;
+            if(role === 'manager'){
+                return next();
+            }
+        }
+        throw new UnauthorizedError()
+    }catch(err){
+        return next(err);
+    }
+}
+
+async function driverOnly(req,res,next){
+    try{
+        const employee = await getEmpForToken(req);
+        if(employee){
+            const role = employee.role;
+            if(role === 'driver' || role === 'manager'){
+                return next();
+            }
+        }
+        throw new UnauthorizedError()
+    }catch(err){
+        return next(err);
+    }
+}
+
+module.exports = {ensureDriver, ensureManager, driverOnly};

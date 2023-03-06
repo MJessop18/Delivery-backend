@@ -210,7 +210,6 @@ static async makeInactive(employeeId){
             [email]
         );
         const employee = result.rows[0];
-        console.log('1',employee);
         if(employee){
             const isValid = await bcrypt.compare(password, employee.password);
             console.assert(isValid, 'invalid username/password');
