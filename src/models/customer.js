@@ -147,5 +147,30 @@ class Customer{
         if (!customer) throw new NotFoundError('no user found');
     }
 
+    static async authenticate(email, password){
+        const result = await db.query(
+            `SELECT id,
+            email,
+            password,
+            first_name AS firstName,
+            last_name AS lastName,
+            phone_number AS phoneNumber
+            FROM customer
+            WHERE email = $1`,
+            [email]
+        );
+        const customer = result.rows[0];
+        console.log('customer', customer)
+        if(customer){
+            const isValid = await bcrypt.compare(password, customer.password);
+            console.assert(isValid, 'invalid username/password');
+            if(isValid === true){
+                delete customer.password;
+                return customer
+            }
+        }
+        throw new UnauthorizedError('invalid username/password'); 
+        }
+
 }
 module.exports = Customer;

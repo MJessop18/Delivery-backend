@@ -25,7 +25,7 @@ router.post('/', async function(req, res, next){
     }
 });
 
-router.get('/:employeeId', ensureDriver, async function (req, res, next){
+router.get('/:employeeId', async function (req, res, next){
     try{
         const employee = await Employee.get(req.params.employeeId);
         return res.json({employee});
@@ -84,7 +84,6 @@ router.post('/login', async function(req,res,next){
         const{email, password} = req.body;
         const employee = await Employee.authenticate(email, password);
         const token = createToken(employee);
-        console.log('accessToken', token);
         return res.json({token});
     }catch(err){
         return next(err);

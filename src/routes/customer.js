@@ -2,6 +2,7 @@ const express = require ('express');
 const Customer = require ('../models/customer')
 const Router = require('express');
 const { ensureManager } = require('../../middleware/auth');
+const { createToken } = require('../../middleware/tokens');
 
 const router = express.Router();
 
@@ -48,6 +49,18 @@ router.delete('/:customerId', async function (req, res, next){
         return res.json({deleted: req.params.customerId})
     }catch (err){
         return next(err)
+    }
+})
+
+router.post('/login', async function(req,res,next){
+    try{
+        const{email, password} = req.body;
+        const customer = await Customer.authenticate(email, password);
+        console.log('cutsomer2', customer)
+        const token = createToken(customer);
+        return res.json({token});
+    }catch(err){
+        return next(err);
     }
 })
 

@@ -5,13 +5,13 @@ const Employee = require("../src/models/employee");
 
 
 async function getEmpForToken(req){
-    const authHeader = req.body && req.body.Authorization;
+    const authHeader = req.header && req.header.authorization;
+    console.log('authhead',authHeader);
     if(!authHeader){
         console.log('authHeader not supplied');
         return;
     }
     const token = authHeader.replace(/^[Bb]earer /, '').trim();
-    console.log('!!', SECRET_KEY, typeof SECRET_KEY)
     const parsedToken = jwt.verify(token, SECRET_KEY.SECRET_KEY);
     if(
         typeof parsedToken !== 'object' || 
@@ -32,8 +32,9 @@ async function getEmpForToken(req){
 //middleware to check if employee is a driver. If not throw unauthorized.
 
 async function ensureDriver(req,res,next){
+    console.log('req1', req.header.authorization);
     try{
-        const employee = await getEmpForToken(req);
+        const employee = await getEmpForToken(req.header);
         if(employee){
             const role = employee.role;
             if(role === 'driver' || role === 'manager'){

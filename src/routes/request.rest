@@ -13,12 +13,12 @@ POST http://localhost:3001/employee/
 Content-Type: application/json
 
 {
-        "email": "admin@zmail.com",
+        "email": "driver@zmail.com",
         "password": "admin",
-        "first_name": "Admin",
-        "last_name": "Admin",
-        "role": "manager",
-        "phone_number": "011-090-0900"
+        "first_name": "Driver",
+        "last_name": "McDrivington",
+        "role": "driver",
+        "phone_number": "123-123-1233"
 }
 
 ###
